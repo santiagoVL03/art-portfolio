@@ -5,6 +5,13 @@ Portafolio mínimo con una galería pública y un panel privado para subir dibuj
 - **`/`** — galería pública: cualquiera puede ver los dibujos.
 - **`/login`** — ruta privada con usuario y contraseña.
 - **`/admin`** — panel protegido para subir y borrar dibujos.
+- **Modo oscuro/claro** — la vista arranca en oscuro y el botón del header guarda
+  tu preferencia en el navegador.
+- **Header y footer** — botón grande de Galería y botón Artista con su ficha.
+- **Ficha de cada dibujo** — al hacer clic en una pieza se abre su metadata
+  (título, descripción y fecha) desde el mismo `drawings.json`.
+
+La ficha del artista se edita en `frontend/src/content.ts`.
 
 ## Stack
 
@@ -33,8 +40,12 @@ backend/
   data/         drawings.json (índice)
 frontend/
   src/
+    components/ SiteHeader, SiteFooter, Dialog, ArtistDialog, DrawingDialog
     screens/    GalleryScreen, LoginScreen, AdminScreen
     api.ts      cliente de la API
+    content.ts  ficha editable del artista
+    theme.ts    paletas clara y oscura
+    ThemeProvider.tsx  tema y persistencia
 docker-compose.yml
 render.yaml
 ```
@@ -162,6 +173,8 @@ Si preferís crearlos a mano en vez de usar el Blueprint:
 
 ## Personalizar
 
-- Nombre del estudio y textos: `frontend/src/screens/GalleryScreen.tsx`.
-- Paleta y tipografías: `frontend/src/theme.ts`.
+- Ficha del artista (nombre, bio y datos): `frontend/src/content.ts`.
+- Paletas clara y oscura y tipografías: `frontend/src/theme.ts`.
+- Textos de la galería y el footer: `frontend/src/screens/GalleryScreen.tsx` y
+  `frontend/src/components/SiteFooter.tsx`.
 - Usuario/contraseña: variables de entorno del backend.

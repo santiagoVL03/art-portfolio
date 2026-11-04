@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import {
   ActivityIndicator,
   Image,
@@ -19,10 +19,13 @@ import {
   uploadDrawing,
   type Drawing,
 } from '../api';
-import { colors, fonts } from '../theme';
+import { useTheme } from '../ThemeProvider';
+import { fonts, type Palette } from '../theme';
 
 export default function AdminScreen() {
   const navigate = useNavigate();
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const [drawings, setDrawings] = useState<Drawing[]>([]);
   const [loading, setLoading] = useState(true);
   const [title, setTitle] = useState('');
@@ -129,18 +132,13 @@ export default function AdminScreen() {
   return (
     <ScrollView style={styles.page} contentContainerStyle={styles.content}>
       <View style={styles.topbar}>
-        <View style={styles.brandGroup}>
-          <Text style={styles.brand}>Estudio</Text>
-          <Text style={styles.badge}>Panel</Text>
+        <View style={styles.headingBlock}>
+          <Text style={styles.eyebrow}>Panel del estudio</Text>
+          <Text style={styles.title}>Publicar dibujos</Text>
         </View>
-        <View style={styles.actions}>
-          <Link to="/" style={styles.link}>
-            Ver galería
-          </Link>
-          <Pressable onPress={onLogout} style={styles.ghostButton}>
-            <Text style={styles.ghostButtonText}>Salir</Text>
-          </Pressable>
-        </View>
+        <Pressable onPress={onLogout} style={styles.ghostButton}>
+          <Text style={styles.ghostButtonText}>Salir</Text>
+        </Pressable>
       </View>
 
       <View style={styles.panel}>
@@ -193,7 +191,7 @@ export default function AdminScreen() {
           disabled={busy}
         >
           {busy ? (
-            <ActivityIndicator color={colors.surface} />
+            <ActivityIndicator color={colors.onAccent} />
           ) : (
             <Text style={styles.primaryButtonText}>Publicar dibujo</Text>
           )}
@@ -238,211 +236,199 @@ export default function AdminScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  page: {
-    flex: 1,
-  },
-  content: {
-    width: '100%',
-    maxWidth: 1100,
-    alignSelf: 'center',
-    paddingHorizontal: 24,
-    paddingTop: 36,
-    paddingBottom: 48,
-    gap: 28,
-  },
-  topbar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    gap: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.line,
-    paddingBottom: 20,
-  },
-  brandGroup: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  brand: {
-    fontFamily: fonts.display,
-    fontSize: 22,
-    color: colors.ink,
-  },
-  badge: {
-    fontSize: 10,
-    letterSpacing: 1.6,
-    textTransform: 'uppercase',
-    color: colors.accent,
-    backgroundColor: colors.accentSoft,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-  },
-  actions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 18,
-  },
-  link: {
-    fontSize: 13,
-    color: colors.muted,
-    textDecorationLine: 'underline',
-  },
-  ghostButton: {
-    borderWidth: 1,
-    borderColor: colors.line,
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-  },
-  ghostButtonText: {
-    fontSize: 12,
-    letterSpacing: 1.2,
-    textTransform: 'uppercase',
-    color: colors.ink,
-  },
-  panel: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.line,
-    padding: 28,
-    gap: 14,
-  },
-  panelTitle: {
-    fontFamily: fonts.display,
-    fontSize: 26,
-    color: colors.ink,
-  },
-  panelHint: {
-    fontSize: 13,
-    lineHeight: 20,
-    color: colors.muted,
-  },
-  field: {
-    gap: 6,
-  },
-  label: {
-    fontSize: 11,
-    letterSpacing: 1.4,
-    textTransform: 'uppercase',
-    color: colors.muted,
-  },
-  input: {
-    backgroundColor: colors.bg,
-    borderWidth: 1,
-    borderColor: colors.line,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    fontSize: 15,
-    color: colors.ink,
-  },
-  textarea: {
-    minHeight: 84,
-    textAlignVertical: 'top',
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
-    flexWrap: 'wrap',
-  },
-  secondaryButton: {
-    borderWidth: 1,
-    borderColor: colors.ink,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-  },
-  secondaryButtonText: {
-    fontSize: 12,
-    letterSpacing: 1.2,
-    textTransform: 'uppercase',
-    color: colors.ink,
-  },
-  fileName: {
-    flexShrink: 1,
-    fontSize: 13,
-    color: colors.muted,
-  },
-  preview: {
-    width: '100%',
-    maxWidth: 320,
-    height: 180,
-    backgroundColor: colors.accentSoft,
-  },
-  error: {
-    fontSize: 13,
-    color: colors.danger,
-  },
-  success: {
-    fontSize: 13,
-    color: colors.accent,
-  },
-  primaryButton: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.ink,
-    paddingVertical: 14,
-    paddingHorizontal: 28,
-    minWidth: 200,
-    minHeight: 48,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonBusy: {
-    opacity: 0.7,
-  },
-  primaryButtonText: {
-    color: colors.surface,
-    fontSize: 13,
-    letterSpacing: 1.4,
-    textTransform: 'uppercase',
-  },
-  listHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  count: {
-    fontSize: 12,
-    color: colors.muted,
-    backgroundColor: colors.accentSoft,
-    paddingVertical: 3,
-    paddingHorizontal: 8,
-  },
-  center: {
-    paddingVertical: 24,
-    alignItems: 'center',
-  },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 20,
-  },
-  card: {
-    flexBasis: 200,
-    flexGrow: 1,
-    maxWidth: 240,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.line,
-  },
-  cardImage: {
-    width: '100%',
-    height: 150,
-    backgroundColor: colors.accentSoft,
-  },
-  cardBody: {
-    padding: 12,
-    gap: 8,
-  },
-  cardTitle: {
-    fontFamily: fonts.display,
-    fontSize: 16,
-    color: colors.ink,
-  },
-  delete: {
-    fontSize: 12,
-    color: colors.danger,
-    textDecorationLine: 'underline',
-  },
-});
+function createStyles(colors: Palette) {
+  return StyleSheet.create({
+    page: {
+      flex: 1,
+    },
+    content: {
+      width: '100%',
+      maxWidth: 1120,
+      alignSelf: 'center',
+      paddingHorizontal: 24,
+      paddingTop: 36,
+      paddingBottom: 48,
+      gap: 28,
+    },
+    topbar: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-end',
+      flexWrap: 'wrap',
+      gap: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.line,
+      paddingBottom: 24,
+    },
+    headingBlock: {
+      gap: 6,
+    },
+    eyebrow: {
+      fontSize: 10,
+      letterSpacing: 1.8,
+      textTransform: 'uppercase',
+      color: colors.accent,
+    },
+    title: {
+      fontFamily: fonts.display,
+      fontSize: 38,
+      lineHeight: 44,
+      color: colors.ink,
+    },
+    ghostButton: {
+      borderWidth: 1,
+      borderColor: colors.line,
+      paddingVertical: 9,
+      paddingHorizontal: 16,
+    },
+    ghostButtonText: {
+      fontSize: 11,
+      letterSpacing: 1.3,
+      textTransform: 'uppercase',
+      color: colors.ink,
+    },
+    panel: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.line,
+      padding: 28,
+      gap: 14,
+    },
+    panelTitle: {
+      fontFamily: fonts.display,
+      fontSize: 26,
+      color: colors.ink,
+    },
+    panelHint: {
+      fontSize: 13,
+      lineHeight: 20,
+      color: colors.muted,
+    },
+    field: {
+      gap: 6,
+    },
+    label: {
+      fontSize: 11,
+      letterSpacing: 1.4,
+      textTransform: 'uppercase',
+      color: colors.muted,
+    },
+    input: {
+      backgroundColor: colors.bg,
+      borderWidth: 1,
+      borderColor: colors.line,
+      paddingVertical: 12,
+      paddingHorizontal: 14,
+      fontSize: 15,
+      color: colors.ink,
+    },
+    textarea: {
+      minHeight: 84,
+      textAlignVertical: 'top',
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 14,
+      flexWrap: 'wrap',
+    },
+    secondaryButton: {
+      borderWidth: 1,
+      borderColor: colors.line,
+      paddingVertical: 10,
+      paddingHorizontal: 16,
+    },
+    secondaryButtonText: {
+      fontSize: 12,
+      letterSpacing: 1.2,
+      textTransform: 'uppercase',
+      color: colors.ink,
+    },
+    fileName: {
+      flexShrink: 1,
+      fontSize: 13,
+      color: colors.muted,
+    },
+    preview: {
+      width: '100%',
+      maxWidth: 320,
+      height: 180,
+      backgroundColor: colors.imageBg,
+    },
+    error: {
+      fontSize: 13,
+      color: colors.danger,
+    },
+    success: {
+      fontSize: 13,
+      color: colors.success,
+    },
+    primaryButton: {
+      alignSelf: 'flex-start',
+      backgroundColor: colors.accent,
+      paddingVertical: 14,
+      paddingHorizontal: 28,
+      minWidth: 200,
+      minHeight: 48,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    buttonBusy: {
+      opacity: 0.7,
+    },
+    primaryButtonText: {
+      fontSize: 13,
+      letterSpacing: 1.4,
+      textTransform: 'uppercase',
+      color: colors.onAccent,
+    },
+    listHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+    },
+    count: {
+      fontSize: 12,
+      color: colors.muted,
+      backgroundColor: colors.accentSoft,
+      paddingVertical: 3,
+      paddingHorizontal: 8,
+    },
+    center: {
+      paddingVertical: 24,
+      alignItems: 'center',
+    },
+    grid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 20,
+    },
+    card: {
+      flexBasis: 200,
+      flexGrow: 1,
+      maxWidth: 240,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.line,
+    },
+    cardImage: {
+      width: '100%',
+      height: 150,
+      backgroundColor: colors.imageBg,
+    },
+    cardBody: {
+      padding: 12,
+      gap: 8,
+    },
+    cardTitle: {
+      fontFamily: fonts.display,
+      fontSize: 16,
+      color: colors.ink,
+    },
+    delete: {
+      fontSize: 12,
+      color: colors.danger,
+      textDecorationLine: 'underline',
+    },
+  });
+}

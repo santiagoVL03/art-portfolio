@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import {
   ActivityIndicator,
@@ -10,10 +10,13 @@ import {
   View,
 } from 'react-native';
 import { getToken, login } from '../api';
-import { colors, fonts } from '../theme';
+import { useTheme } from '../ThemeProvider';
+import { fonts, type Palette } from '../theme';
 
 export default function LoginScreen() {
   const navigate = useNavigate();
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -81,7 +84,7 @@ export default function LoginScreen() {
           disabled={busy}
         >
           {busy ? (
-            <ActivityIndicator color={colors.surface} />
+            <ActivityIndicator color={colors.onAccent} />
           ) : (
             <Text style={styles.buttonText}>Entrar</Text>
           )}
@@ -95,87 +98,91 @@ export default function LoginScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  page: {
-    flex: 1,
-  },
-  content: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-  },
-  card: {
-    width: '100%',
-    maxWidth: 400,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.line,
-    padding: 32,
-    gap: 14,
-  },
-  eyebrow: {
-    fontSize: 11,
-    letterSpacing: 1.8,
-    textTransform: 'uppercase',
-    color: colors.accent,
-  },
-  title: {
-    fontFamily: fonts.display,
-    fontSize: 30,
-    color: colors.ink,
-  },
-  hint: {
-    fontSize: 14,
-    lineHeight: 22,
-    color: colors.muted,
-    marginBottom: 6,
-  },
-  field: {
-    gap: 6,
-  },
-  label: {
-    fontSize: 11,
-    letterSpacing: 1.4,
-    textTransform: 'uppercase',
-    color: colors.muted,
-  },
-  input: {
-    backgroundColor: colors.bg,
-    borderWidth: 1,
-    borderColor: colors.line,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    fontSize: 15,
-    color: colors.ink,
-  },
-  error: {
-    fontSize: 13,
-    lineHeight: 20,
-    color: colors.danger,
-  },
-  button: {
-    marginTop: 4,
-    backgroundColor: colors.ink,
-    paddingVertical: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 48,
-  },
-  buttonBusy: {
-    opacity: 0.7,
-  },
-  buttonText: {
-    color: colors.surface,
-    fontSize: 13,
-    letterSpacing: 1.4,
-    textTransform: 'uppercase',
-  },
-  link: {
-    marginTop: 8,
-    fontSize: 13,
-    color: colors.muted,
-    textAlign: 'center',
-    textDecorationLine: 'underline',
-  },
-});
+function createStyles(colors: Palette) {
+  return StyleSheet.create({
+    page: {
+      flex: 1,
+    },
+    content: {
+      flexGrow: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 24,
+    },
+    card: {
+      width: '100%',
+      maxWidth: 410,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.line,
+      borderRadius: 2,
+      padding: 32,
+      gap: 14,
+    },
+    eyebrow: {
+      fontSize: 11,
+      letterSpacing: 1.8,
+      textTransform: 'uppercase',
+      color: colors.accent,
+    },
+    title: {
+      fontFamily: fonts.display,
+      fontSize: 32,
+      lineHeight: 38,
+      color: colors.ink,
+    },
+    hint: {
+      marginBottom: 6,
+      fontSize: 14,
+      lineHeight: 22,
+      color: colors.muted,
+    },
+    field: {
+      gap: 6,
+    },
+    label: {
+      fontSize: 11,
+      letterSpacing: 1.4,
+      textTransform: 'uppercase',
+      color: colors.muted,
+    },
+    input: {
+      backgroundColor: colors.bg,
+      borderWidth: 1,
+      borderColor: colors.line,
+      paddingVertical: 12,
+      paddingHorizontal: 14,
+      fontSize: 15,
+      color: colors.ink,
+    },
+    error: {
+      fontSize: 13,
+      lineHeight: 20,
+      color: colors.danger,
+    },
+    button: {
+      marginTop: 4,
+      backgroundColor: colors.accent,
+      paddingVertical: 14,
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: 48,
+    },
+    buttonBusy: {
+      opacity: 0.7,
+    },
+    buttonText: {
+      fontSize: 13,
+      letterSpacing: 1.4,
+      textTransform: 'uppercase',
+      color: colors.onAccent,
+    },
+    link: {
+      marginTop: 8,
+      fontSize: 13,
+      color: colors.muted,
+      textAlign: 'center',
+      textDecorationLine: 'underline',
+    },
+  });
+}

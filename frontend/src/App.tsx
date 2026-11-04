@@ -1,14 +1,19 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { StyleSheet, View } from 'react-native';
+import SiteFooter from './components/SiteFooter';
+import SiteHeader from './components/SiteHeader';
 import AdminScreen from './screens/AdminScreen';
 import GalleryScreen from './screens/GalleryScreen';
 import LoginScreen from './screens/LoginScreen';
-import { colors } from './theme';
+import { ThemeProvider, useTheme } from './ThemeProvider';
 
-export default function App() {
+function Shell() {
+  const { colors } = useTheme();
+
   return (
-    <BrowserRouter>
-      <View style={styles.root}>
+    <View style={[styles.root, { backgroundColor: colors.bg }]}>
+      <SiteHeader />
+      <View style={styles.main}>
         <Routes>
           {/* Ruta pública: cualquiera puede ver la galería. */}
           <Route path="/" element={<GalleryScreen />} />
@@ -18,13 +23,26 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </View>
-    </BrowserRouter>
+      <SiteFooter />
+    </View>
+  );
+}
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <BrowserRouter>
+        <Shell />
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: colors.bg,
+  },
+  main: {
+    flex: 1,
   },
 });

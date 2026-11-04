@@ -4,14 +4,52 @@ body,
   height: 100%;
 }
 
+html {
+  background-color: #0d0c0a;
+  color-scheme: dark;
+}
+
+html[data-theme='light'] {
+  background-color: #f7f4ee;
+  color-scheme: light;
+}
+
 body {
   margin: 0;
-  background-color: #f7f4ee;
+  background-color: transparent;
   font-family: Inter, 'Helvetica Neue', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
+#root {
+  display: flex;
+  flex-direction: column;
+}
+
 * {
   box-sizing: border-box;
+}
+
+::selection {
+  background-color: #e2835a;
+  color: #160f0b;
+}
+
+html[data-theme='light'] ::selection {
+  background-color: #b4532a;
+  color: #ffffff;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #322c25;
+  border-radius: 999px;
+}
+
+html[data-theme='light'] ::-webkit-scrollbar-thumb {
+  background-color: #d8d0c2;
 }
