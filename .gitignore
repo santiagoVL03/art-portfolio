@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+.env.local
+.env.dev
+.env.prod
+*.log
+
+backend/data/*
+!backend/data/.gitkeep
+backend/uploads/*
+!backend/uploads/.gitkeep

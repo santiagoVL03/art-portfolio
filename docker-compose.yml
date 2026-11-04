@@ -1,0 +1,43 @@
+services:
+  # API NestJS en imagen Docker (es la que Render necesita).
+  api:
+    build:
+      context: ./backend
+    container_name: portfolio-api
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      ADMIN_USER: ${ADMIN_USER:-admin}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-cambia-esta-clave}
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-cambiar-en-produccion}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173,http://localhost:4173}
+      DATA_DIR: /app/data
+      UPLOAD_DIR: /app/uploads
+    volumes:
+      - api-data:/app/data
+      - api-uploads:/app/uploads
+
+  # Front: sin Dockerfile propio. Usa la imagen oficial de Node, instala,
+  # compila y sirve el build (npm install / npm run build).
+  web:
+    image: node:22-alpine
+    container_name: portfolio-web
+    restart: unless-stopped
+    working_dir: /app
+    depends_on:
+      - api
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:3000}
+    volumes:
+      - ./frontend:/app
+      - web-node-modules:/app/node_modules
+    command: sh -c "npm install && npm run build && npm run preview -- --host 0.0.0.0 --port 5173"
+
+volumes:
+  api-data:
+  api-uploads:
+  web-node-modules:

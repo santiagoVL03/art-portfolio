@@ -1,0 +1,35 @@
+# Blueprint de Render: API (Docker) + front (sitio estático).
+# Con el repo en GitHub: New + Blueprint y elegí este archivo.
+services:
+  - type: web
+    name: portfolio-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /api/health
+    envVars:
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_USER
+        value: admin
+      - key: ADMIN_PASSWORD
+        sync: false
+      # "*" permite cualquier origen; podés restringirlo a la URL del front.
+      - key: CORS_ORIGIN
+        value: "*"
+
+  - type: web
+    name: portfolio-web
+    runtime: static
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
